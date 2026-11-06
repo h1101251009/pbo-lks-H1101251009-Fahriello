@@ -4,14 +4,18 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Config\Env;
 use App\Contracts\BookRepositoryInterface;
+use App\Contracts\CategoryRepositoryInterface;
 use App\Controllers\BookController;
+use App\Controllers\CategoryController;
 use App\Core\Container;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Router;
 use App\Database\Connection;
 use App\Repositories\MySQLBookRepository;
+use App\Repositories\MySQLCategoryRepository;
 use App\Services\BookService;
+use App\Services\CategoryService;
 
 Env::load(__DIR__ . '/../.env');
 
@@ -30,6 +34,17 @@ $container->bind(
     fn(Container $c) => new BookService($c->make(BookRepositoryInterface::class))
 );
 
+// Binding Category
+$container->bind(
+    CategoryRepositoryInterface::class,
+    fn(Container $c) => new MySQLCategoryRepository($c->make(PDO::class))
+);
+
+$container->bind(
+    CategoryService::class,
+    fn(Container $c) => new CategoryService($c->make(CategoryRepositoryInterface::class))
+);
+
 $request = new Request();
 
 $container->bind(
@@ -37,9 +52,15 @@ $container->bind(
     fn(Container $c) => new BookController($c->make(BookService::class), $request)
 );
 
+$container->bind(
+    CategoryController::class,
+    fn(Container $c) => new CategoryController($c->make(CategoryService::class), $request)
+);
+
 // Routing
 try {
     $controller = $container->make(BookController::class);
+    $categoryController = $container->make(CategoryController::class);
 
     $router = new Router();
     $router->get('/api/books', [$controller, 'index']);
@@ -48,6 +69,13 @@ try {
     $router->put('/api/books/{id}', [$controller, 'update']);
     $router->delete('/api/books/{id}', [$controller, 'destroy']);
 
+    // Route Category
+    $router->get('/api/categories', [$categoryController, 'index']);
+    $router->get('/api/categories/{id}', [$categoryController, 'show']);
+    $router->post('/api/categories', [$categoryController, 'store']);
+    $router->put('/api/categories/{id}', [$categoryController, 'update']);
+    $router->delete('/api/categories/{id}', [$categoryController, 'destroy']);
+
     $router->dispatch($request);
 } catch (\Throwable $e) {
     Response::json([
@@ -55,4 +83,3 @@ try {
         'message' => 'Terjadi kesalahan server: ' . $e->getMessage(),
     ], 500);
 }
-
