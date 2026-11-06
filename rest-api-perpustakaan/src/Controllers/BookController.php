@@ -35,7 +35,7 @@ class BookController
     {
         $this->respond(fn() => Response::json([
             'success' => true,
-            'message' => 'Buku berhasil ditambahkan',
+            'message' => 'Buku berhasil dibuat',
             'data'    => $this->service->create($this->request->getBody()),
         ], 201));
     }
