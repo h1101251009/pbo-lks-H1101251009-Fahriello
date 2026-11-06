@@ -1,10 +1,7 @@
 const routes = {
     dashboard: renderDashboard,
     buku: renderBooks,
-    kategori: () => {
-        document.getElementById('app').innerHTML =
-            '<p class="text-gray-500">Halaman Kategori akan dibuat di langkah berikutnya.</p>';
-    }
+    kategori: renderCategories
 };
 
 function navigate() {
