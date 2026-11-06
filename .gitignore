@@ -1,5 +1,2 @@
-.env
 vendor/
-.idea/
-.vscode/
-*.log
+.env
