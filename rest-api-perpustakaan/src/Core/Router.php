@@ -51,6 +51,9 @@ class Router
             }
         }
 
-        Response::json(['error' => 'Endpoint tidak ditemukan'], 404);
+        Response::json([
+    'success' => false,
+    'message' => 'Endpoint tidak ditemukan: ' . $request->getPath(),
+], 404);
     }
 }

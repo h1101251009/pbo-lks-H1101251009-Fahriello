@@ -22,7 +22,7 @@ class BookService
         $book = $this->repository->findById($id);
 
         if ($book === null) {
-            throw new \Exception('Buku tidak ditemukan', 404);
+            throw new \Exception("Buku dengan ID $id tidak ditemukan", 404);
         }
 
         return $book->toArray();
