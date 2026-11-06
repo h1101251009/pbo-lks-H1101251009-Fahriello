@@ -12,3 +12,9 @@ function showToast(message, type = 'success') {
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
+
+function unwrap(res) {
+    if (Array.isArray(res)) return res;
+    if (res && Array.isArray(res.data)) return res.data;
+    return [];
+}
